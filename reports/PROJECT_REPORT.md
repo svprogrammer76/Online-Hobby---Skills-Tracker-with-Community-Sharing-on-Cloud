@@ -2,7 +2,7 @@
 
 ## Abstract
 
-This project designs and implements a cloud-oriented platform for recording hobbies, skills, practice sessions, measurable goals and community achievements. A FastAPI REST service provides authentication and user-scoped authorization, SQLAlchemy models structured learning/social data, and a responsive browser client presents progress and community interactions. A local SQLite/files mode makes the project reproducible without paid services; managed PostgreSQL and private object storage are the intended hosted equivalents. Automated tests cover core ownership and workflow behavior.
+This project designs and implements a cloud-oriented platform for recording hobbies, skills, practice sessions, measurable goals and community achievements. A FastAPI REST service provides authentication and user-scoped authorization, SQLAlchemy models structured learning/social data, and a responsive browser client presents progress and community interactions. Local SQLite/files mode makes the project reproducible without paid services. The project author deployed and checked the app on Render with Supabase PostgreSQL; private cloud object storage is not yet integrated. Automated tests cover core ownership and workflow behavior.
 
 ## Introduction and problem statement
 
@@ -42,11 +42,11 @@ Run `python -m pytest -q`. Tests cover register/duplicate/login, skills and isol
 
 ## Cloud deployment, security, privacy and scale
 
-For a student deployment, host the static frontend, API and managed database/storage with secrets configured in the platform; verify current free quotas. Enterprise reference uses S3/CloudFront, Cognito, API Gateway/Lambda, RDS or DynamoDB, private S3, optional cache, CloudWatch and Secrets Manager. Apply TLS, least privilege, encryption, rate limits, upload scanning, input validation, moderation, backup and restore tests. At scale add stateless replicas, load balancing, indexes, keyset pagination, caches and queues. Feed fan-out may evolve from read-time queries to write-time/hybrid delivery.
+The student deployment runs FastAPI and the browser frontend on Render and stores relational data in an existing Supabase PostgreSQL project; secrets are configured in the Render environment. The author reports checking the live app at https://online-hobby-and-skills-tracker-with.onrender.com/. The app uses its own signed bearer tokens, not Supabase Auth, and uploads remain on the service's ephemeral filesystem rather than cloud object storage. Enterprise reference uses S3/CloudFront, Cognito, API Gateway/Lambda, RDS or DynamoDB, private S3, optional cache, CloudWatch and Secrets Manager. Apply TLS, least privilege, encryption, rate limits, upload scanning, input validation, moderation, backup and restore tests. At scale add stateless replicas, load balancing, indexes, keyset pagination, caches and queues. Feed fan-out may evolve from read-time queries to write-time/hybrid delivery.
 
 ## Results, advantages and limitations
 
-The local project supports end-to-end skill, practice, goal and community flows with a reproducible test suite. Benefits include cross-device architecture, structured progress, modular service boundaries and no-cost local development. Local SQLite and filesystem uploads are not highly available cloud services; moderation, deletion lifecycle, refresh/revocation, migrations, actual cloud adapters and deployment evidence remain future work unless implemented and verified by the student.
+The project supports end-to-end skill, practice, goal and community flows with a reproducible test suite and has been deployed to a public Render URL with Supabase PostgreSQL. Local SQLite and the deployed service's filesystem uploads are not durable cloud object storage. Supabase Auth, private cloud uploads, moderation, deletion lifecycle, refresh/revocation, migrations and a restore exercise remain future work.
 
 ## Future scope and conclusion
 

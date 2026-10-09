@@ -1,6 +1,10 @@
 # Online Hobby & Skills Tracker with Community Sharing on Cloud
 
-Growlog is a local-first learning community: create a profile, track skills and practice, set goals, share achievements, and see progress analytics. FastAPI + SQLAlchemy API, browser frontend, SQLite and local uploads make the complete demo runnable without a paid account. PostgreSQL and private object storage are the production path.
+Growlog is a learning community for tracking skills, practice, goals, achievements, and progress analytics. The FastAPI + SQLAlchemy application and browser frontend are deployed on Render, with PostgreSQL configured through Supabase. The same project can run locally with SQLite. The live service has been deployed and checked by the project author.
+
+**Live application:** [online-hobby-and-skills-tracker-with.onrender.com](https://online-hobby-and-skills-tracker-with.onrender.com/)
+
+**GitHub repository:** [svprogrammer76/Online-Hobby---Skills-Tracker-with-Community-Sharing-on-Cloud](https://github.com/svprogrammer76/Online-Hobby---Skills-Tracker-with-Community-Sharing-on-Cloud)
 
 ## Problem and solution
 
@@ -37,7 +41,7 @@ The browser never accesses the database directly. A cloud deployment can add a C
 | B Student cloud | React, FastAPI, Supabase Auth/Postgres/Storage or Firebase equivalents | Medium; check current quotas/pricing | Managed identity/data/files, provider limits and policies vary |
 | C Advanced | React/Next, FastAPI/Lambda, Cognito, API Gateway, RDS/DynamoDB, S3, CloudFront, CloudWatch | High; usage may cost money | Strong managed scaling; IAM and billing complexity |
 
-The included implementation uses FastAPI, SQLite, local files, and a plain HTML/CSS/JavaScript frontend. It is a local simulation rather than a deployed cloud service. PostgreSQL support is available with `DATABASE_URL` after installing the PostgreSQL driver; private cloud object storage still needs a provider adapter before public deployment.
+The included implementation uses FastAPI, SQLAlchemy, a plain HTML/CSS/JavaScript frontend, and supports both SQLite locally and PostgreSQL through `DATABASE_URL`. The deployed instance runs on Render and uses the existing Supabase PostgreSQL project. Authentication is currently implemented in the application with signed bearer tokens; Supabase Auth is not integrated. Uploads still use the local filesystem, so cloud object storage is not yet integrated. Render's default filesystem is ephemeral; on a Free service, files can be lost on restart, redeploy, or spin-down.
 
 ## Data model and progress
 
@@ -67,15 +71,15 @@ Passwords use PBKDF2-HMAC-SHA256 and random salts. Signed tokens expire after 24
 
 ## Deployment and cloud concepts
 
-Student path (future cloud adaptation): host this FastAPI app and connect managed PostgreSQL; the included app currently uses its own bearer-token auth and local filesystem uploads, not Supabase/Firebase Auth or cloud object storage. Add and test a private storage adapter with signed URLs before treating uploaded media as cloud-persistent. Check current free quotas/payment terms; configure TLS, CORS, backups, storage policies and secret management.
+**Deployed student setup:** Render hosts the FastAPI app and serves the browser frontend; Supabase PostgreSQL stores structured application data. The author reports that the deployment and application were checked at the live URL above. Render provides HTTPS for the service. The app currently uses its own bearer-token authentication and local filesystem uploads; it does not use Supabase Auth or Supabase Storage. Do not treat uploaded media as cloud-persistent. Render Free services may spin down when idle, and Render's default filesystem is ephemeral unless persistent storage is configured. See [`docs/CLOUD_DEPLOYMENT.md`](docs/CLOUD_DEPLOYMENT.md) for the deployed configuration and remaining work.
 
 AWS reference: S3/CloudFront frontend, Cognito auth, API Gateway + Lambda (or App Runner), RDS/DynamoDB, private S3 with pre-signed URLs, optional ElastiCache, CloudWatch and Secrets Manager. Azure: Static Web Apps/CDN, Entra External ID, Functions/API Management, PostgreSQL/Cosmos DB, Blob, Monitor/Key Vault. GCP: Firebase Hosting/Cloud CDN, Identity Platform, Cloud Run/API Gateway, Cloud SQL/Firestore, Cloud Storage, Monitoring/Secret Manager. Services can incur charges; add budget alerts and teardown steps.
 
 | Concept | Demonstration |
 |---|---|
-| Cloud, SaaS, PaaS, IaaS | This local simulation is not itself a cloud service; when hosted it can be offered as SaaS. Managed database/hosting are PaaS; VM/network provisioning is IaaS in the advanced variant |
+| Cloud, SaaS, PaaS, IaaS | The deployed app is hosted on Render and uses Supabase PostgreSQL as managed cloud services (PaaS). IaaS is covered in the AWS reference architecture |
 | Client-server, REST, authN/authZ | Browser calls API; bearer token identifies caller and owner checks authorize resources |
-| Cloud DB/object store | SQLite/local files simulate; use managed Postgres and private object storage in cloud |
+| Cloud DB/object store | Supabase PostgreSQL is used by the deployed app. Local uploads simulate file storage; a private cloud object-storage adapter remains future work |
 | Serverless/event-driven | Lambda alternative; enqueue image scan/achievement notification on upload/post |
 | Scale/elasticity/availability | Stateless API replicas and managed DB; multi-zone service and backups improve uptime |
 | CDN/load balancer/API gateway | Advanced deployment edge-caches static assets, routes and balances API calls |
@@ -93,7 +97,7 @@ Current local UI captures: [registration](screenshots/01-registration-screen.png
 
 Folders: `backend/` API/data/auth; `frontend/` browser UI; `tests/`; `screenshots/`; `docs/` architecture, deployment and verification guides; `reports/` project report and placement content. There is one project README at the root; technical details live in the relevant guides, not duplicate subfolder READMEs.
 
-Known limits: SQLite/local files are for simulation. Add schema migrations, actual private cloud storage, full report/block/admin moderation, account deletion, token revocation, rate limiting, CI/CD, observability and cloud restore test for production readiness.
+Known limits: local mode uses SQLite; the deployed app uses managed PostgreSQL. Uploads remain on Render's ephemeral filesystem, and the app does not use Supabase Auth. Add private object storage with signed URLs, schema migrations, full report/block/admin moderation, account deletion, token revocation, rate limiting, CI/CD, observability and a cloud restore test before claiming production readiness. Render Free may spin down after inactivity; check current provider limits before relying on the demo.
 
 
 Build truthful incremental commits: architecture, authentication, profiles, skills, practice, goals, database, storage, posts, reactions, analytics, security, tests, deployment, docs. See `reports/PROJECT_REPORT.md` and `reports/PLACEMENT.md`.
